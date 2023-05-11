@@ -37,10 +37,6 @@ impl<C: Crypto> DpeInstance<'_, C> {
     const MAX_NEW_HANDLE_ATTEMPTS: usize = 8;
     pub const AUTO_INIT_LOCALITY: u32 = 0;
 
-    pub(crate) fn new_context_handles() -> [Context<C>; MAX_HANDLES] {
-        [(); MAX_HANDLES].map(|_| Context::<C>::new())
-    }
-
     /// Create a new DPE instance.
     ///
     /// # Arguments
@@ -57,7 +53,7 @@ impl<C: Crypto> DpeInstance<'_, C> {
         }
 
         let mut dpe = DpeInstance {
-            contexts: Self::new_context_handles(),
+            contexts: core::array::from_fn(|_| Context::new()),
             support,
             localities,
             has_initialized: false,

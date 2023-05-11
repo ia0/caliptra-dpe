@@ -203,12 +203,12 @@ impl<'a, C: Crypto> Iterator for ChildToRootIter<'a, C> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::DpeInstance;
     use crypto::OpensslCrypto;
 
     #[test]
     fn test_child_to_root_iter() {
-        let mut contexts = DpeInstance::<OpensslCrypto>::new_context_handles();
+        const INITIALIZER_CONTEXT: Context<OpensslCrypto> = Context::new();
+        let mut contexts = [INITIALIZER_CONTEXT; MAX_HANDLES];
         let root_index = CHAIN_INDICES[0];
         assert_eq!(MAX_HANDLES, CHAIN_INDICES.len());
 
@@ -243,7 +243,8 @@ mod tests {
 
     #[test]
     fn test_child_to_root_overflow() {
-        let mut contexts = DpeInstance::<OpensslCrypto>::new_context_handles();
+        const INITIALIZER_CONTEXT: Context<OpensslCrypto> = Context::new();
+        let mut contexts = [INITIALIZER_CONTEXT; MAX_HANDLES];
 
         // Create circular relationship.
         contexts[0].parent_idx = 1;
@@ -261,7 +262,8 @@ mod tests {
 
     #[test]
     fn test_child_to_root_check_parent_and_state() {
-        let mut contexts = DpeInstance::<OpensslCrypto>::new_context_handles();
+        const INITIALIZER_CONTEXT: Context<OpensslCrypto> = Context::new();
+        let mut contexts = [INITIALIZER_CONTEXT; MAX_HANDLES];
         contexts[0].state = ContextState::Retired;
         contexts[0].parent_idx = MAX_HANDLES as u8;
 
